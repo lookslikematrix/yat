@@ -4,7 +4,7 @@ version = "1.0.0"
 description = "🔥 YaT - Yet another Template"
 authors = ["Christian Decker <christian.decker@lookslikematrix.de>"]
 license = "MIT"
-readme = "README.md"
+readme = "../README.md"
 
 [tool.poetry.scripts]
 yat = "yat.__main__:yat"

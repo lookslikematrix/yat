@@ -18,3 +18,7 @@ def yat(ctx, loglevel, gpu):
         logging.basicConfig(format='%(message)s', encoding='utf-8', level=loglevel)
     else:
         logging.disable(logging.CRITICAL)
+
+
+if __name__ == '__main__':
+    yat()
