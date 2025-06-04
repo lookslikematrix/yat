@@ -1,3 +1,4 @@
 # directories
 .pytest_cache
 __pycache__
+.yat

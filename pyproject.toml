@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.scripts]
-yat = "yat.__main__:cli"
+yat = "yat.__main__:yat"
 
 [tool.poetry.dependencies]
 python = "^3.12"
