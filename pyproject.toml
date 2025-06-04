@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "yat"
+version = "1.0.0"
+description = "🔥 YaT - Yet another Template"
+authors = ["Christian Decker <christian.decker@lookslikematrix.de>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.scripts]
+yat = "yat.__main__:cli"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+click = "^8.2.1"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.4.0"
+assertpy = "^1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
