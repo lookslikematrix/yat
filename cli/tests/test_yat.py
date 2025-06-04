@@ -20,5 +20,8 @@ def test_yat_help():
         "  🔥 YaT - Command-line interface\n\n"
         "Options:\n"
         "  --loglevel TEXT  Set loglevel.  [default: WARNING]\n"
-        "  --help           Show this message and exit.\n"
+        "  --help           Show this message and exit.\n\n"
+        "Commands:\n"
+        "  list  📄 List available YaT stages.\n"
+        "  run   🏎️ Run YaT stage.\n"
     )

@@ -1,9 +1,9 @@
 group "default" {
-  targets = ["yat-precommit"]
+  targets = ["yat-pre-commit"]
 }
 
-target "yat-precommit" {
+target "yat-pre-commit" {
   context = "stages/pre-commit"
-  tags = ["yat-precommit:latest"]
+  tags = ["yat-pre-commit:latest"]
   platforms = ["linux/amd64", "linux/arm64"]
 }
