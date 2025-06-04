@@ -1,5 +1,6 @@
 {
     "python.testing.pytestArgs": [
+        "-cov=ivos",
         "cli/tests"
     ],
     "python.testing.unittestEnabled": false,

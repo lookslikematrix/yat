@@ -1,8 +1,10 @@
 from pathlib import Path
+from subprocess import CalledProcessError
 
 import logging
 import os
 import subprocess
+import sys
 
 import click
 
@@ -57,18 +59,23 @@ def run(stage):
     )
     current_working_directory = os.getcwd()
 
-    subprocess.run(
-        [
-            "docker",
-            "run",
-            "--volume",
-            f"{current_working_directory}:{current_working_directory}",
-            "--workdir",
-            current_working_directory,
-            f"yat-{stage}:latest"
-        ],
-        check=True
-    )
+    try:
+        subprocess.run(
+            [
+                "docker",
+                "run",
+                "--user",
+                f"{os.getuid()}:{os.getgid()}",
+                "--volume",
+                f"{current_working_directory}:{current_working_directory}",
+                "--workdir",
+                current_working_directory,
+                f"yat-{stage}:latest"
+            ],
+            check=True
+        )
+    except CalledProcessError:
+        sys.exit(1)
 
 
 if __name__ == '__main__':
