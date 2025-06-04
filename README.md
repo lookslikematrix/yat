@@ -1,3 +1,1 @@
 # 🔥 YaT - Yet another Template
-
-
