@@ -82,7 +82,7 @@ def test_run_stage_happy_path(mocker):
                     f"{current_working_directory}:{current_working_directory}",
                     "--workdir",
                     current_working_directory,
-                    f"yat-{stage_name}:latest"
+                    f"lookslikematrix/yat-{stage_name}:latest"
                 ],
                 check=True
             )
