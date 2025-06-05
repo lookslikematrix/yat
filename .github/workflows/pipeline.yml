@@ -1,0 +1,23 @@
+on: [push]
+jobs:
+  yat:
+    name: 🔥 YaT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 🔨 Build
+        run: |
+          set -e
+          docker buildx bake
+      - name: 🚀 Release
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          set -e
+          echo "$DOCKER_TOKEN" | docker login --username "$DOCKER_USERNAME" --password-stdin
+          docker images "lookslikematrix/yat*:latest" --format "{{.Repository}}:{{.Tag}}" | while IFS= read -r image; do
+              echo "🚀 Push image: $image"
+              docker push "$image"
+          done
+          docker logout
