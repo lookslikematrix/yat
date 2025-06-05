@@ -3,7 +3,7 @@ FROM alpine:latest
 ENV TARGET_BRANCH=origin/main
 ENV XDG_CACHE_HOME=.yat/precommit/cache
 
-RUN apk add --update --no-cache python3 git nodejs npm
+RUN apk add --update --no-cache python3 bash git nodejs npm
 RUN git config --global --add safe.directory '*'
 RUN npm config set cache .yat/precommit/cache/.npm --global && npm --global cache verify
 
