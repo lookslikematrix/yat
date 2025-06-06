@@ -70,7 +70,7 @@ def run(stage):
                 f"{current_working_directory}:{current_working_directory}",
                 "--workdir",
                 current_working_directory,
-                f"yat-{stage}:latest"
+                f"lookslikematrix/yat-{stage}:latest"
             ],
             check=True
         )

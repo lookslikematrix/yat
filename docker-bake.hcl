@@ -4,5 +4,5 @@ group "default" {
 
 target "yat-pre-commit" {
   context = "stages/pre-commit"
-  tags = ["yat-pre-commit:latest"]
+  tags = ["lookslikematrix/yat-pre-commit:latest"]
 }

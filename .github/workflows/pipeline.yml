@@ -1,0 +1,62 @@
+on: [push]
+jobs:
+  pre-commit:
+    name: 🔶 pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./github/pre-commit
+  build:
+    name: 🔨 Build
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -e
+          docker buildx bake
+          mkdir -p dist
+          docker save lookslikematrix/yat-pre-commit:latest --output dist/yat-pre-commit_latest.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          path: |
+            dist
+  test:
+    name: 🧪 Test
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    container:
+      image: python:latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -e
+          python -m venv .venv
+          .venv/bin/pip install poetry
+          cd cli
+          ../.venv/bin/poetry install
+          ../.venv/bin/poetry run pytest --cov=yat tests
+  release:
+    name: 🚀 Release
+    needs:
+      - build
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: 🚀 Release
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          set -e
+          cd artifact
+          docker load --input yat-pre-commit_latest.tar
+          echo "$DOCKER_TOKEN" | docker login --username "$DOCKER_USERNAME" --password-stdin
+          docker images "lookslikematrix/yat*:latest" --format "{{.Repository}}:{{.Tag}}" | while IFS= read -r image; do
+              echo "🚀 Push image: $image"
+              docker push "$image"
+          done
+          docker logout
