@@ -1,10 +1,11 @@
+import pytest
+
 from assertpy import assert_that
 from click.testing import CliRunner
 from pathlib import Path
 from unittest.mock import call
 
 import os
-import subprocess
 
 from yat.__main__ import run
 
@@ -44,10 +45,23 @@ def test_run_stage_do_not_exists():
         f"[ {stage_name} ] YaT could not find this stage. Execute `yat list` to get available stages.\n"
     )
 
-
-def test_run_stage_happy_path(mocker):
+@pytest.mark.parametrize(
+        "stage_name,environment_args", [
+            (
+                "pre-commit",
+                [
+                    "--env",
+                    "TARGET_BRANCH=origin/main"
+                ]
+            ),
+            (
+                "software-composition-analysis",
+                []
+            )
+        ]
+    )
+def test_run_stage_happy_path(mocker, stage_name, environment_args):
     # arrange
-    stage_name = "pre-commit"
     run_mock = mocker.patch("subprocess.run")
     script = Path(os.path.realpath(__file__))
     yat_root_directory = Path(os.path.dirname(script)).parent.parent
@@ -82,7 +96,10 @@ def test_run_stage_happy_path(mocker):
                     f"{current_working_directory}:{current_working_directory}",
                     "--workdir",
                     current_working_directory,
-                    f"lookslikematrix/yat-{stage_name}:latest"
+                    *environment_args,
+                    f"lookslikematrix/yat-{stage_name}:latest",
+                    "/bin/sh",
+                    "/.yat/run.sh"
                 ],
                 check=True
             )

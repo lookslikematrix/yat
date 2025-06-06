@@ -1,0 +1,8 @@
+name: "🔬 Software Composition Analysis"
+
+command:
+  - /bin/sh
+  - /.yat/run.sh
+
+environment:
+  SOURCE_DIRECTORY:

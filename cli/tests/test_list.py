@@ -31,4 +31,5 @@ def test_list_happy_path():
     assert_that(response.exit_code).is_equal_to(0)
     assert_that(response.output).is_equal_to(
         "pre-commit\n"
+        "software-composition-analysis\n"
     )

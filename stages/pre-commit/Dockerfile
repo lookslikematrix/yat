@@ -12,5 +12,3 @@ RUN python -m venv /.yat/venv
 RUN /.yat/venv/bin/pip install pre-commit
 
 COPY run.sh /.yat/run.sh
-
-CMD [ "/bin/sh", "/.yat/run.sh" ]

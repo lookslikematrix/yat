@@ -1,0 +1,23 @@
+name: 🔬 Software Composition Analysis
+description: '🔬 Software Composition Analysis stage from YaT.'
+inputs:
+  source-directory:
+    description: Defines the source directory.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+    - run: |
+        set -e
+        python -m venv .venv
+        .venv/bin/pip install -e cli
+        .venv/bin/yat run software-composition-analysis
+      shell: bash
+      env:
+        SOURCE_DIRECTORY: ${{ inputs.source-directory }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: yat_software-composition-analysis
+        path: |
+          cli/cyclonedx.json

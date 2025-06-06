@@ -5,6 +5,7 @@ import logging
 import os
 import subprocess
 import sys
+import yaml
 
 import click
 
@@ -30,8 +31,33 @@ def list():
     """
     📄 List available YaT stages.
     """
-    click.echo("pre-commit")
+    script = Path(os.path.realpath(__file__))
+    yat_root_directory = Path(os.path.dirname(script)).parent.parent
+    for directory in os.listdir(yat_root_directory.joinpath("stages")):
+        click.echo(directory)
 
+
+def load_yat_yml(yat_yaml_path: Path):
+    if not yat_yaml_path.exists():
+        return {}
+
+    with open(yat_yaml_path, "r") as file:
+        return yaml.safe_load(file)
+
+def get_environment_args(environment_dict):
+    environment_args = []
+
+    for environment in environment_dict:
+        environment_value = os.getenv(environment, environment_dict[environment])
+        if environment_value is None:
+            continue
+
+        environment_args.extend([
+            "--env",
+            f"{environment}={environment_value}"
+        ])
+
+    return environment_args
 
 @yat.command()
 @click.argument(
@@ -41,12 +67,13 @@ def run(stage):
     """
     🏎️ Run YaT stage.
     """
-    if stage != "pre-commit":
-        click.echo(f"[ {stage} ] YaT could not find this stage. Execute `yat list` to get available stages.")
-        exit(1)
 
     script = Path(os.path.realpath(__file__))
     yat_root_directory = Path(os.path.dirname(script)).parent.parent
+    if stage not in os.listdir(yat_root_directory.joinpath("stages")):
+        click.echo(f"[ {stage} ] YaT could not find this stage. Execute `yat list` to get available stages.")
+        exit(1)
+
     subprocess.run(
         [
             "docker",
@@ -57,7 +84,13 @@ def run(stage):
         cwd=yat_root_directory,
         check=True
     )
+
     current_working_directory = os.getcwd()
+    yat_yaml = load_yat_yml(yat_root_directory.joinpath("stages").joinpath(stage).joinpath("yat.yml"))
+
+    environment_args = []
+    if "environment" in yat_yaml:
+        environment_args = get_environment_args(yat_yaml["environment"])
 
     try:
         subprocess.run(
@@ -70,7 +103,9 @@ def run(stage):
                 f"{current_working_directory}:{current_working_directory}",
                 "--workdir",
                 current_working_directory,
-                f"lookslikematrix/yat-{stage}:latest"
+                *environment_args,
+                f"lookslikematrix/yat-{stage}:latest",
+                *yat_yaml["command"]
             ],
             check=True
         )

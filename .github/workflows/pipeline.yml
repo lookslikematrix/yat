@@ -8,6 +8,15 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./github/pre-commit
+  software-composition-analysis:
+    name: 🔬 Software Composition Analysis
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./github/software-composition-analysis
+        with:
+          source-directory: cli
   build:
     name: 🔨 Build
     needs: pre-commit
@@ -42,6 +51,7 @@ jobs:
     name: 🚀 Release
     needs:
       - build
+      - software-composition-analysis
       - test
     runs-on: ubuntu-latest
     steps:
