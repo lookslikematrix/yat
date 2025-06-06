@@ -1,0 +1,12 @@
+name: 🔶 pre-commit
+description: '🔶 pre-commit stage from YaT.'
+inputs:
+  target_branch:
+    description: Defines the target branch.
+    default: "origin/main"
+
+runs:
+  using: docker
+  image: ../../stages/pre-commit/Dockerfile
+  env:
+    TARGET_BRANCH: ${{ inputs.target_branch }}

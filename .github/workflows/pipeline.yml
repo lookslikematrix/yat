@@ -1,20 +1,42 @@
 on: [push]
 jobs:
-  yat:
-    name: 🔥 YaT
+  pre-commit:
+    name: 🔶 pre-commit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: 🔨 Build
-        run: |
+        with:
+          fetch-depth: 0
+      - uses: lookslikematrix/yat/github/pre-commit@feature/pre-commit_jenkins
+  build:
+    name: 🔨 Build
+    runs-on: ubuntu-latest
+    needs: pre-commit
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
           set -e
           docker buildx bake
+          mkdir -p dist
+          docker save lookslikematrix/yat-pre-commit:latest --output dist/yat-pre-commit_latest.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          path: |
+            dist
+  release:
+    name: 🚀 Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
       - name: 🚀 Release
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         run: |
           set -e
+          cd artifact
+          docker load --input yat-pre-commit_latest.tar
           echo "$DOCKER_TOKEN" | docker login --username "$DOCKER_USERNAME" --password-stdin
           docker images "lookslikematrix/yat*:latest" --format "{{.Repository}}:{{.Tag}}" | while IFS= read -r image; do
               echo "🚀 Push image: $image"
