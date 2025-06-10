@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yat"
-version = "1.0.0"
+version = "1.1.0"
 description = "🔥 YaT - Yet another Template"
 authors = ["Christian Decker <christian.decker@lookslikematrix.de>"]
 license = "MIT"
@@ -10,8 +10,9 @@ readme = "../README.md"
 yat = "yat.__main__:yat"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 click = "^8.2.1"
+pyyaml = "^6.0.2"
 
 
 [tool.poetry.group.test.dependencies]
@@ -23,3 +24,8 @@ pytest-cov = "^6.1.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration_tests: mark a test as a integration test.",
+]

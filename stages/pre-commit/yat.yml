@@ -1,0 +1,8 @@
+name: "🔶 pre-commit"
+
+command:
+  - /bin/sh
+  - /.yat/run.sh
+
+environment:
+  TARGET_BRANCH: origin/main

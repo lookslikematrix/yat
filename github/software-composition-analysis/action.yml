@@ -1,0 +1,32 @@
+name: 🔬 Software Composition Analysis
+description: '🔬 Software Composition Analysis stage from YaT.'
+inputs:
+  source-directory:
+    description: Defines the source directory.
+  yat-release-name:
+    description: Defines the name of this component.
+  yat-release-version:
+    description: Defines the version of this component.
+  yat-output-directory:
+    description: Defines the output directory for the software bill of material.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+    - run: |
+        set -e
+        python -m venv .venv
+        .venv/bin/pip install -e cli
+        .venv/bin/yat run software-composition-analysis
+      shell: bash
+      env:
+        SOURCE_DIRECTORY: ${{ inputs.source-directory }}
+        YAT_RELEASE_NAME: ${{ inputs.yat-release-name }}
+        YAT_RELEASE_VERSION: ${{ inputs.yat-release-version }}
+        YAT_OUTPUT_DIRECTORY: ${{ inputs.yat-output-directory }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: yat_software-composition-analysis
+        path: |
+          ${{ inputs.yat-output-directory }}*.cyclondx.json

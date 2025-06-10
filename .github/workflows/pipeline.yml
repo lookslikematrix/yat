@@ -5,9 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: ./github/pre-commit
+  software-composition-analysis:
+    name: 🔬 Software Composition Analysis
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./github/software-composition-analysis
+        with:
+          source-directory: cli
   build:
     name: 🔨 Build
     needs: pre-commit
@@ -19,6 +26,7 @@ jobs:
           docker buildx bake
           mkdir -p dist
           docker save lookslikematrix/yat-pre-commit:latest --output dist/yat-pre-commit_latest.tar
+          docker save lookslikematrix/yat-software-composition-analysis:latest --output dist/yat-software-composition-analysis_latest.tar
       - uses: actions/upload-artifact@v4
         with:
           path: |
@@ -27,8 +35,6 @@ jobs:
     name: 🧪 Test
     needs: pre-commit
     runs-on: ubuntu-latest
-    container:
-      image: python:latest
     steps:
       - uses: actions/checkout@v4
       - run: |
@@ -42,7 +48,9 @@ jobs:
     name: 🚀 Release
     needs:
       - build
+      - software-composition-analysis
       - test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -54,6 +62,7 @@ jobs:
           set -e
           cd artifact
           docker load --input yat-pre-commit_latest.tar
+          docker load --input yat-software-composition-analysis_latest.tar
           echo "$DOCKER_TOKEN" | docker login --username "$DOCKER_USERNAME" --password-stdin
           docker images "lookslikematrix/yat*:latest" --format "{{.Repository}}:{{.Tag}}" | while IFS= read -r image; do
               echo "🚀 Push image: $image"
