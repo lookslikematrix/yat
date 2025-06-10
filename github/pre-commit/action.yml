@@ -1,12 +1,21 @@
 name: 🔶 pre-commit
 description: '🔶 pre-commit stage from YaT.'
 inputs:
-  target_branch:
+  target-branch:
     description: Defines the target branch.
     default: "origin/main"
 
 runs:
-  using: docker
-  image: ../../stages/pre-commit/Dockerfile
-  env:
-    TARGET_BRANCH: ${{ inputs.target_branch }}
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - run: |
+        set -e
+        python -m venv .venv
+        .venv/bin/pip install -e cli
+        .venv/bin/yat run pre-commit
+      shell: bash
+      env:
+        TARGET_BRANCH: ${{ inputs.target-branch }}

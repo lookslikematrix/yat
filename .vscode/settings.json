@@ -1,8 +1,11 @@
 {
     "python.testing.pytestArgs": [
-        "-cov=ivos",
+        "-cov=yat",
         "cli/tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": ".github/workflows/pipeline.yml"
+    }
 }
