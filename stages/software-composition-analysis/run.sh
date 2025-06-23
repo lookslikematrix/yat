@@ -20,3 +20,7 @@ echo "[ $SBOM_OUTPUT_PATH ] Create software bill of material (SBOM) here."
 if [ -f "pyproject.toml" ]; then
     /.yat/venv/bin/cyclonedx-py poetry --output-file $SBOM_OUTPUT_PATH
 fi
+
+if [ -f "requirements.txt" ]; then
+    /.yat/venv/bin/cyclonedx-py requirements --output-file $SBOM_OUTPUT_PATH
+fi
