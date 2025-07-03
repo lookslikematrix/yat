@@ -98,6 +98,7 @@ def test_run_stage_happy_path(mocker, stage_name, environment_args):
                 [
                     "docker",
                     "run",
+                    "--rm",
                     "--user",
                     f"{os.getuid()}:{os.getgid()}",
                     "--volume",

@@ -86,12 +86,22 @@ def run(stage):
     )
 
     current_working_directory = os.getcwd()
+    project_yat_path = Path(current_working_directory).joinpath("yat.yml")
+    project_yat_yaml = None
+    environment_args = []
+    if project_yat_path.exists():
+        logging.info(f"[ {project_yat_path} ] Load project yat.yml.")
+        project_yat_yaml = load_yat_yml(project_yat_path)
+        environment_args = get_environment_args(project_yat_yaml["environment"])
+
     yat_yaml = load_yat_yml(yat_root_directory.joinpath("stages").joinpath(stage).joinpath("yat.yml"))
 
-    environment_args = []
     output_directory = []
     if "environment" in yat_yaml:
-        environment_args = get_environment_args(yat_yaml["environment"])
+        environment_dict = yat_yaml["environment"]
+        if project_yat_yaml:
+            environment_dict = yat_yaml["environment"] | project_yat_yaml["environment"]
+        environment_args = get_environment_args(environment_dict)
 
         output_directory_value = os.getenv("YAT_OUTPUT_DIRECTORY")
 
@@ -108,10 +118,10 @@ def run(stage):
             ]
 
     try:
-        subprocess.run(
-            [
+        command = [
                 "docker",
                 "run",
+                "--rm",
                 "--user",
                 f"{os.getuid()}:{os.getgid()}",
                 "--volume",
@@ -122,7 +132,11 @@ def run(stage):
                 *environment_args,
                 f"lookslikematrix/yat-{stage}:latest",
                 *yat_yaml["command"]
-            ],
+            ]
+
+        logging.info(f"[ {' '.join(command)} ] Execute this command.")
+        subprocess.run(
+            command,
             check=True
         )
     except CalledProcessError:
