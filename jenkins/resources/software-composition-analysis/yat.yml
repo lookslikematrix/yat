@@ -1,0 +1,11 @@
+name: "🔬 Software Composition Analysis"
+
+command:
+  - /bin/sh
+  - /.yat/run.sh
+
+environment:
+  SOURCE_DIRECTORY:
+  YAT_RELEASE_NAME:
+  YAT_RELEASE_VERSION:
+  YAT_OUTPUT_DIRECTORY:

@@ -4,17 +4,42 @@ def call(Map config = [:]) {
     String yatReleaseVersion = config.get('yatReleaseVersion', '')
     String yatOutputDirectory = config.get('yatOutputDirectory', '')
     script {
-        String environment_arguments = "" +
-          "--env SOURCE_DIRECTORY=${sourceDirectory} " +
-          "--env YAT_RELEASE_NAME=${yatReleaseName} " +
-          "--env YAT_RELEASE_VERSION=${yatReleaseVersion} " +
-          "--env YAT_OUTPUT_DIRECTORY=${yatOutputDirectory} "
+        def String image_name = "yat-software-composition-analysis:latest"
+        def String[] files = [
+            "software-composition-analysis/Dockerfile",
+            "software-composition-analysis/run.sh",
+            "software-composition-analysis/yat.yml"
+        ]
 
-        docker.image("lookslikematrix/yat-software-composition-analysis:latest").inside(environment_arguments){
+        for(file in files) {
+            fileContent = libraryResource file
+            writeFile(
+                file: ".yat/" + file,
+                text: fileContent
+            )
+        }
+
+        dir(".yat/software-composition-analysis") {
+            docker.build(image_name)
+        }
+
+        def String[] environment_variables = [
+            "SOURCE_DIRECTORY=${sourceDirectory}",
+            "YAT_RELEASE_NAME=${yatReleaseName}",
+            "YAT_RELEASE_VERSION=${yatReleaseVersion}",
+            "YAT_OUTPUT_DIRECTORY=${yatOutputDirectory}"
+        ]
+        String environment_arguments = ""
+        for (environment_variable in environment_variables) {
+            environment_arguments += "--env ${environment_variable} "
+        }
+
+        docker.image(image_name).inside(environment_arguments){
             sh '/bin/sh /.yat/run.sh'
         }
+
         archiveArtifacts(
-             artifacts: "${yatOutputDirectory}*.cyclondx.json"
+             artifacts: "${yatOutputDirectory}*${yatReleaseName}_${yatReleaseVersion}.cyclondx.json"
         )
     }
 }
