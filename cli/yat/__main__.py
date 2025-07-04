@@ -26,8 +26,8 @@ def yat(loglevel):
         logging.disable(logging.CRITICAL)
 
 
-@yat.command()
-def list():
+@yat.command(name="list")
+def list_command():
     """
     📄 List available YaT stages.
     """
@@ -141,6 +141,13 @@ def run(stage):
         )
     except CalledProcessError:
         sys.exit(1)
+
+
+@yat.command()
+def generate():
+    """
+    🏭️ Generate templates for CI/CD platforms.
+    """
 
 
 if __name__ == '__main__':
