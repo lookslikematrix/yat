@@ -22,6 +22,7 @@ def test_yat_help():
         "  --loglevel TEXT  Set loglevel.  [default: WARNING]\n"
         "  --help           Show this message and exit.\n\n"
         "Commands:\n"
-        "  list  📄 List available YaT stages.\n"
-        "  run   🏎️ Run YaT stage.\n"
+        "  generate  🏭️ Generate templates for CI/CD platforms.\n"
+        "  list      📄 List available YaT stages.\n"
+        "  run       🏎️ Run YaT stage.\n"
     )

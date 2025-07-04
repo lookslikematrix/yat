@@ -26,8 +26,8 @@ def yat(loglevel):
         logging.disable(logging.CRITICAL)
 
 
-@yat.command()
-def list():
+@yat.command(name="list")
+def list_command():
     """
     📄 List available YaT stages.
     """
@@ -141,6 +141,36 @@ def run(stage):
         )
     except CalledProcessError:
         sys.exit(1)
+
+
+@yat.command()
+@click.option(
+    "--list",
+    "list_flag",
+    is_flag=True,
+    help="List all targets for executing `yat generate TARGET`."
+)
+@click.option(
+    "--output-directory",
+    help="Set output directory."
+)
+@click.argument(
+    "target",
+    required=False
+)
+def generate(list_flag, output_directory, target):
+    """
+    🏭️ Generate templates for CI/CD platforms.
+    """
+
+    if list_flag:
+        script = Path(os.path.realpath(__file__))
+        yat_directory = Path(os.path.dirname(script)).parent.parent
+        for directory in os.listdir(yat_directory):
+            jinja_template = yat_directory.joinpath(directory).joinpath("yat.jinja2")
+            if jinja_template.exists():
+                click.echo(directory)
+        return
 
 
 if __name__ == '__main__':

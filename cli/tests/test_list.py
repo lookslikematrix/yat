@@ -1,14 +1,14 @@
 from assertpy import assert_that
 from click.testing import CliRunner
 
-from yat.__main__ import list
+from yat.__main__ import list_command
 
 RUNNER = CliRunner()
 
 
 def test_list_help():
     # arrange & act
-    response = RUNNER.invoke(list,
+    response = RUNNER.invoke(list_command,
                              args=[
                                  "--help"
                              ])
@@ -25,7 +25,7 @@ def test_list_help():
 
 def test_list_happy_path():
     # arrange & act
-    response = RUNNER.invoke(list)
+    response = RUNNER.invoke(list_command)
 
     # assert
     assert_that(response.exit_code).is_equal_to(0)
