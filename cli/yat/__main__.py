@@ -1,4 +1,5 @@
 from pathlib import Path
+from shutil import copytree, make_archive, rmtree
 from subprocess import CalledProcessError
 
 import logging
@@ -162,15 +163,41 @@ def generate(list_flag, output_directory, target):
     """
     🏭️ Generate templates for CI/CD platforms.
     """
+    script = Path(os.path.realpath(__file__))
+    yat_directory = Path(os.path.dirname(script)).parent.parent
 
     if list_flag:
-        script = Path(os.path.realpath(__file__))
-        yat_directory = Path(os.path.dirname(script)).parent.parent
         for directory in os.listdir(yat_directory):
             jinja_template = yat_directory.joinpath(directory).joinpath("yat.jinja2")
             if jinja_template.exists():
                 click.echo(directory)
         return
+
+    output_directory_path = Path(output_directory)
+    if not output_directory_path.exists():
+        os.mkdir(output_directory_path)
+
+    stages_directory = yat_directory.joinpath("stages")
+    cli_directory = yat_directory.joinpath("cli")
+
+    if target == "jenkins":
+        resources_directory = output_directory_path.joinpath("resources")
+        output_stages_directory = resources_directory.joinpath("stages")
+        copytree(stages_directory, output_stages_directory, dirs_exist_ok=True)
+        output_cli_directory = resources_directory.joinpath("cli")
+        copytree(cli_directory, output_cli_directory, dirs_exist_ok=True)
+        yat_archive = resources_directory.joinpath("yat")
+        make_archive(yat_archive, "zip", resources_directory)
+        rmtree(output_stages_directory)
+        rmtree(output_cli_directory)
+
+        vars_directory = output_directory_path.joinpath("vars")
+        if not vars_directory.exists():
+            os.mkdir(vars_directory)
+
+
+    if target == "github":
+        pass
 
 
 if __name__ == '__main__':
