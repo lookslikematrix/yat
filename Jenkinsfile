@@ -1,5 +1,5 @@
 library(
-    identifier: 'yat@main',
+    identifier: 'yat@feature/pre-commit',
     retriever: modernSCM(
         scm: [
             $class: 'GitSCMSource',
