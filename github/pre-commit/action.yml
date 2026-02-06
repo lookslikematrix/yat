@@ -1,0 +1,12 @@
+name: 🔶 pre-commit
+description: '🔶 pre-commit stage from YaT.'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v5
+    - name: "🔶 pre-commit"
+      run: |
+        echo "🔶 pre-commit"
+      shell: bash
+
