@@ -14,6 +14,11 @@ pipeline {
 
     stages {
         stage('🔶 pre-commit') {
+            agent {
+                dockerfile {
+                    label 'docker'
+                }
+            }
             steps {
                 preCommit()
             }
