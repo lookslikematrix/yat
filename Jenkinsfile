@@ -1,5 +1,5 @@
 library(
-    identifier: 'yat@main',
+    identifier: 'yat@feature/pre-commit',
     retriever: modernSCM(
         scm: [
             $class: 'GitSCMSource',
@@ -14,6 +14,11 @@ pipeline {
 
     stages {
         stage('🔶 pre-commit') {
+            agent {
+                dockerfile {
+                    label 'docker'
+                }
+            }
             steps {
                 preCommit()
             }
