@@ -1,5 +1,5 @@
 library(
-    identifier: 'yat@main',
+    identifier: 'yat@feature/pre-commit',
     retriever: modernSCM(
         scm: [
             $class: 'GitSCMSource',
@@ -14,9 +14,23 @@ pipeline {
 
     stages {
         stage('🔶 pre-commit') {
+            agent {
+                dockerfile {
+                    label 'docker'
+                }
+            }
             steps {
                 preCommit()
             }
         }
+        stage('⚒️ Build') {
+            steps {
+                sh '''#!/bin/bash
+                    set -e
+                    docker buildx bake
+                '''
+            }
+        }
+        // deploy lookslikematrix/yat:latest
     }
 }

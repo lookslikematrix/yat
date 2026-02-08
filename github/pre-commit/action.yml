@@ -7,6 +7,7 @@ runs:
     - uses: actions/checkout@v5
     - name: "🔶 pre-commit"
       run: |
-        echo "🔶 pre-commit"
+        set -e
+        docker build -t yat:latest .
+        docker run --rm yat:latest
       shell: bash
-

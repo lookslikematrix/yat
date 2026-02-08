@@ -1,7 +1,8 @@
 def call() {
     script {
         sh '''#!/bin/bash
-            echo "🔶 pre-commit"
+            set -e
+            python -m yat
         '''
     }
 }
