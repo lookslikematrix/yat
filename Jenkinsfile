@@ -23,5 +23,14 @@ pipeline {
                 preCommit()
             }
         }
+        stage('⚒️ Build') {
+            steps {
+                sh '''#!/bin/bash
+                    set -e
+                    docker buildx bake
+                '''
+            }
+        }
+        // deploy lookslikematrix/yat:latest
     }
 }
